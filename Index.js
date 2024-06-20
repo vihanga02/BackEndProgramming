@@ -1,17 +1,9 @@
-const path = require('node:path')
+const EventEmitter = require('events');
 
-console.log(path.basename(__filename));
-console.log(path.basename(__dirname));
+const emitter = new EventEmitter();
 
-console.log(path.extname(__filename));
-console.log(path.extname(__dirname));
+emitter.on('order-pizza', (size, topping) => {
+    console.log(`Pizza ordered`, size, topping);
+})
 
-console.log(path.parse(__filename));
-console.log(path.format(path.parse(__dirname)));
-
-console.log(path.isAbsolute(__filename));
-console.log(path.isAbsolute(__dirname));
-
-console.log(path.join('folder1', 'folder2', 'index.html'));
-
-console.log(path.resolve('folder1', 'folder2', 'index.html'));
+emitter.emit('order-pizza', 'large', 'mushroom');
