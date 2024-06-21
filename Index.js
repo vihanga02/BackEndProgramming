@@ -1,16 +1,13 @@
-const fs = require("node:fs/promises");
+const fs = require("node:fs");
+const zliv = require("zlib");
 
-console.log('First');
+const readableStream = fs.createReadStream('./file.txt', {
+    encoding: 'utf8',
+    highWaterMark: 2
+});
 
-async  function readFiles() {
-    try {
-        const data = await fs.readFile('file1.txt', 'utf-8');
-        console.log(data);
-    } catch (error) {
-        console.error('Error reading the file', error);
-    }
-}
+readableStream.pipe(gzip).pipe(fs.WriteStream('./file2.txt.gz'))
 
-readFiles();
+const writabeleStream = fs.createWriteStream('./file2.txt');
 
-console.log('Last');
+readableStream.pipe(writabeleStream);
