@@ -1,28 +1,14 @@
-const http = require('node:http');
-const fs = require('node:fs');
+const fs = require("fs");
+const { nextTick } = require("process");
 
-const server = http.createServer((req, res) => {
-    if (req.url === '/'){
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end("Home Page");
-    }
-    else if (req.url === '/about'){
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end("About Page");
-    }
-    else if (req.url === '/api'){
-        res.writeHead(200, {"Content-Type": "application/json"});
-        res.end(JSON.stringify({
-            name: "John Doe",
-            age: 25,
-        }))
-    }
-    else{
-        res.writeHead(404);
-        res.end("Page Not Found")
-    }
-});
+const readableStream = fs.createReadStream(__filename);
+readableStream.close();
 
-server.listen(3000, () => {
-    console.log("Server is running on port 3000");
+readableStream.on("close", () => {
+    console.log("Stream Close event call back.");
 })
+
+setImmediate(() => console.log("Immediate Timer 1"));
+setTimeout(() => console.log("Timeout Timer 1"), 0);
+Promise.resolve().then(() => console.log("Promise 1"));
+process,nextTick(() => console.log("Process.nextTick 1"));
