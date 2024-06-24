@@ -1,18 +1,14 @@
 import express from "express";
 import { body, query, validationResult, checkSchema } from "express-validator";
-import { createUserValidationSchema } from "./utils/validationSchemas";
+import { createUserValidationSchema } from "./utils/validationSchemas.mjs";
+import { usersRouter } from "./routes/users.mjs";
+import { mockUsers } from "./utils/constants.mjs";
 
 const app = express();
 app.use(express.json());
+app.use(usersRouter);
 
 const port = process.env.PORT || 3000;
-
-const mockUsers = [
-    { id: 1, name: 'John Doe', displayName: 'John' },
-    { id: 2, name: 'Jane Doe', displayName: 'Jane' },
-    { id: 3, name: 'Alice Paka', displayName: 'Alice' },
-    { id: 4, name: 'Bob Doe', displayName: 'Bob' }
-];
 
 function middleWare(req, res, next) {
     console.log(`${req.method} ${req.url}`);
@@ -38,36 +34,6 @@ app.use(middleWare); // Apply middleware globally
 app.get("/", (req, res) => {
     res.status(201).send("Hello World");
 });
-
-app.get('/api/users', 
-    query('filter').optional().isString().notEmpty().withMessage('Filter must be a non-empty string'),
-    (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const { filter, value } = req.query;
-        if (filter && value) {
-            return res.send(
-                mockUsers.filter((user) => user[filter].includes(value))
-            );
-        }
-        return res.send(mockUsers);
-    }
-);
-
-app.post('/api/users', 
-    checkSchema(createUserValidationSchema),
-    (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, name: req.body.name };
-        mockUsers.push(newUser);
-        res.status(200).send("User added");
-    }
-);
 
 app.get('/api/products', (req, res) => {
     res.send([
