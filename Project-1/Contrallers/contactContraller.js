@@ -1,8 +1,12 @@
-const getContacts = (req, res) => {
-    res.status(200).json({data: "Get all contacts"});
-};
+const asyncHandler = require("express-async-handler");
+const contact = require("../models/contactModel");
 
-const createConstact = (req, res) => {
+const getContacts = asyncHandler( async (req, res) => {
+    const contacts = await contact.find();
+    res.status(200).json(contacts);
+});
+
+const createConstact = asyncHandler(async (req, res) => {
     console.log(req.body);
     const { name, email, phone } = req.body;
     if (!name || !email || !phone ){
@@ -10,19 +14,19 @@ const createConstact = (req, res) => {
         throw new Errpr("Please provide name, email and phone");
     }
     res.status(200).json({data: "Create new contact"});
-};
+});
 
-const getContact = (req, res) => {
+const getContact = asyncHandler( async (req, res) => {
     res.status(200).json({data: `Get contact for id: ${req.params.id}`});
-};
+});
 
-const updateContact = (req, res) => {
+const updateContact = asyncHandler( async(req, res) => {
     res.status(200).json({data: `Update contact for id: ${req.params.id}`});
-};
+});
 
-const deleteContact = (req, res) => {
+const deleteContact = asyncHandler( async (req, res) => {
     res.status(200).json({data: `Delete contact for id: ${req.params.id}`});
-}
+});
 
 
 
