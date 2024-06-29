@@ -11,6 +11,7 @@ app.use(errorHandler)
 const port = process.env.PORT || 3000;
 
 app.use("/api/contacts", require("./Routes/contactRoutes.js"));
+app.use("/api/users", require("./Routes/userRoutes.js"));
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
