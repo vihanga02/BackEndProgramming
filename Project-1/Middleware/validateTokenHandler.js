@@ -6,13 +6,19 @@ const validateToken =  asyncHandler( async (req, res, next) => {
     let authHeader = req.headers.Authorization || req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer")){
         token = authHeader.split(" ")[1];
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
             if (err){
                 res.status(401);
                 throw new Error("Invalid token");
             }
-            req.user = user;
+            console.log(decoded)
             next();
         });
+        if (!token){
+            res.status(401);
+            throw new Error("No token provided");
+        } 
     }  
 });
+
+module.exports = validateToken;

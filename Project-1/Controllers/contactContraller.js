@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Contact = require("../models/contactModel");
 
 const getContacts = asyncHandler( async (req, res) => {
-    const contacts = await Contact.find();
+    const contacts = await Contact.find({ user_id: req.user.id});
     res.status(200).json(contacts);
 });
 
@@ -16,7 +16,8 @@ const createConstact = asyncHandler(async (req, res) => {
     const newContact = await Contact.create({
         name,
         email,
-        phone
+        phone,
+        user_id: req.user.id
     });
 
     res.status(200).json(newContact);
@@ -42,6 +43,11 @@ const updateContact = asyncHandler( async(req, res) => {
         req.body,
         { new: true}
     );
+
+    if (contact.user_id.toString() !== req.user.id){
+        res.status(403);
+        throw new Error("You are not authorized to update this contact");
+    }
 
     res.status(200).json(updateContact);
 });
